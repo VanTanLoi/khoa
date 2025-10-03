@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <link rel="icon" href="./assets/image-2.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="./assets/image-2.jpg" type="image/png" sizes="16x16">
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <title>Phước Khoa - Thanh Trâm </title>
+  <title>Chị Hai - Thu Thuận </title>
   <style>
     :root{--night:#0b0f1a;--overlay:#0b0f1acc;--panel:#0c1424eb;--panel-border:#2a3f6b;--panel-glow:#0b1a3a;--accent:#ffd56b;--stage-max-w:min(88vw,780px);--stage-max-h:min(82vh,600px);--img-max-w:min(82vw,720px);--img-max-h:min(68vh,520px);--text-size:clamp(18px,4.8vw,36px);--text-line:1.3;--stage-pad:clamp(8px,1.5vw,14px);--x-size:36px;--x-font:20px}
     @media (max-width:480px){:root{--stage-max-w:92vw;--stage-max-h:70vh;--img-max-w:92vw;--img-max-h:52vh;--text-size:clamp(16px,5.2vw,28px);--text-line:1.28;--stage-pad:clamp(8px,3vw,12px);--x-size:34px;--x-font:18px}}
@@ -24,18 +24,32 @@
     .close{position:absolute;top:8px;right:8px;z-index:10;width:var(--x-size);height:var(--x-size);border-radius:10px;border:1px solid #324a7b;background:#162445;color:#ffeab7;font-size:var(--x-font);font-weight:800;line-height:var(--x-size);text-align:center;cursor:pointer;user-select:none;box-shadow:0 6px 18px #000a,inset 0 0 18px #ffffff22;transition:transform .12s,background .2s}
     .close:hover{transform:translateY(-1px) scale(1.02);background:#1b2b52}
     .close:active{transform:translateY(0) scale(.98)}
+    .intro{position:fixed;inset:0;display:grid;place-items:center;z-index:99;background:rgba(5,7,13,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:introFadeIn .3s ease both}
+    .intro.hide{animation:introFadeOut .35s ease both}
+    .intro-box{max-width:min(90vw,720px);margin:0 5vw;border-radius:18px;padding:20px 28px;background:linear-gradient(180deg,#0e1a33,#0b1326);border:1px solid #2a3f6b;box-shadow:0 12px 60px #000c,inset 0 0 60px #0b1a3a}
+    .intro-txt{font-size:clamp(18px,4.8vw,36px);line-height:1.28;font-weight:800;text-align:center;color:#ffeab7;text-shadow:0 2px 14px #000,0 0 26px #ffb84d55}
+    @keyframes introFadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes introFadeOut{from{opacity:1}to{opacity:0}}
   </style>
 </head>
 <body>
   <audio id="bgm" preload="auto" loop playsinline>
     <source src="./assets/music.mp3" type="audio/mpeg"/>
   </audio>
+
+  <div class="intro" id="intro">
+    <div class="intro-box">
+      <div class="intro-txt">🏮✨ Hãy chọn <span style="color:#ffd56b;text-decoration:underline;">6 lồng đèn</span> – sẽ có bất ngờ cho em đấy! ✨😊</div>
+    </div>
+  </div>
+
   <div class="sky" aria-hidden="true"></div>
   <canvas id="lanterns"></canvas>
   <div class="lamp-mask" id="lampMask"></div>
   <div class="vignette" id="vignette"></div>
   <canvas id="fx"></canvas>
   <div class="reveal" id="reveal"><div class="stage" id="stage"></div></div>
+
 <script>
 const bgm = document.getElementById('bgm');
 let bgmStarted = false;
@@ -52,48 +66,26 @@ function startBgmOnce(){
     })(performance.now());
   }).catch(()=>{ bgmStarted = false; });
 }
+
 const CONFIG = {
   IMAGES:[
     {type:'image',src:'./assets/image-1.jpg',alt:'Ảnh 1'},
     {type:'image',src:'./assets/image-2.jpg',alt:'Ảnh 2'},
     {type:'image',src:'./assets/image-3.jpg',alt:'Ảnh 3'}
   ],
- TEXTS = [
-
-  {
-
-    type: 'text',
-
-    content: '🎉 Trung Thu này, anh chúc em thật nhiều niềm vui, bình an và luôn xinh đẹp như ánh trăng rằm. Anh cũng muốn nói lời xin lỗi chân thành vì đã không làm tròn vai trò một người yêu, đã để em phải buồn, thất vọng. Anh thật sự hối hận về điều đó.'
-
-  },
-
-  {
-
-    type: 'text',
-
-    content: '🌕 Anh chúc em một mùa Trung Thu ngọt ngào, rực rỡ và trọn vẹn yêu thương bên gia đình. Anh biết mình đã sai khi chưa đủ quan tâm, chưa đủ kiên nhẫn và nhiều lần làm em tổn thương. Anh xin lỗi vì tất cả những điều đó, và thật lòng mong em sẽ hạnh phúc.'
-
-  },
-
-  {
-
-    type: 'text',
-
-    content: '🍵 Trung Thu đến, anh chỉ muốn chúc em bình an, may mắn, sự nghiệp thuận lợi và luôn được yêu thương đúng nghĩa. Anh xin lỗi vì đã nhiều lần để em cô đơn và không che chở được cho em như anh đã hứa. Anh sẽ cố gắng thay đổi để xứng đáng với tình cảm của em, nếu em còn cho anh cơ hội.'
-  }
-]
+  TEXTS:[
+    {type:'text',content:'🎉 Trung Thu này, anh chúc em thật nhiều niềm vui, bình an và luôn xinh đẹp như ánh trăng rằm. Anh cũng muốn nói lời xin lỗi chân thành vì đã không làm tròn vai trò một người yêu, đã để em phải buồn, thất vọng. Anh thật sự hối hận về điều đó.'},
+    {type:'text',content:'🌕 Anh chúc em một mùa Trung Thu ngọt ngào, rực rỡ và trọn vẹn yêu thương bên gia đình. Anh biết mình đã sai khi chưa đủ quan tâm, chưa đủ kiên nhẫn và nhiều lần làm em tổn thương. Anh xin lỗi vì tất cả những điều đó, và thật lòng mong em sẽ hạnh phúc.'},
+    {type:'text',content:'🍵 Trung Thu đến, anh chỉ muốn chúc em bình an, may mắn, sự nghiệp thuận lợi và luôn được yêu thương đúng nghĩa. Anh xin lỗi vì đã nhiều lần để em cô đơn và không che chở được cho em như anh đã hứa. Anh sẽ cố gắng thay đổi để xứng đáng với tình cảm của em, nếu em còn cho anh cơ hội.'}
+  ],
   LOOP:true, ALTERNATE:true, RESPAWN_ON_CLOSE:true,
   LANTERN_COUNT:36, DPR_MAX:2, CLICK_HIT_MULT:0.55, FX_BURST_MS:640
 };
+
 const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
-const buildSeq=(imgs,txts,alt)=>{
-  if(!alt) return [...imgs,...txts];
-  const seq=[], n=Math.max(imgs.length,txts.length);
-  for(let i=0;i<n;i++){ if(imgs[i]) seq.push(imgs[i]); if(txts[i]) seq.push(txts[i]); }
-  return seq;
-};
+const buildSeq=(imgs,txts,alt)=>{ if(!alt) return [...imgs,...txts]; const r=[], n=Math.max(imgs.length,txts.length); for(let i=0;i<n;i++){ if(imgs[i]) r.push(imgs[i]); if(txts[i]) r.push(txts[i]); } return r; };
 const SEQ=buildSeq(CONFIG.IMAGES,CONFIG.TEXTS,CONFIG.ALTERNATE);
+
 (function(){
   const lamp=document.getElementById('lampMask'), vig=document.getElementById('vignette');
   let x=-999,y=-999,isTouch=false;
@@ -114,6 +106,7 @@ const SEQ=buildSeq(CONFIG.IMAGES,CONFIG.TEXTS,CONFIG.ALTERNATE);
     requestAnimationFrame(idle);
   })(performance.now());
 })();
+
 const LanternField=(function(){
   const canvas=document.getElementById('lanterns');
   const ctx=canvas.getContext('2d');
@@ -163,7 +156,7 @@ const LanternField=(function(){
       p._cx=p.x; p._cy=p.y;
 
       const radius=Math.max(8, 0.9*Math.max(p._w||0,p._h||0));
-      if(!Number.isFinite(p._cx)||!Number.isFinite(p._cy)||!Number.isFinite(radius)) continue; 
+      if(!Number.isFinite(p._cx)||!Number.isFinite(p._cy)||!Number.isFinite(radius)) continue;
 
       const gx=p._cx, gy=p._cy;
       const glow=ctx.createRadialGradient(gx,gy,2,gx,gy,radius);
@@ -194,6 +187,7 @@ const LanternField=(function(){
   }
   return { clickAt, spawnOne:()=>respawn() };
 })();
+
 (function(){
   const fx=document.getElementById('fx');
   const ctx=fx.getContext('2d');
@@ -255,6 +249,7 @@ const LanternField=(function(){
     setTimeout(()=>{ setStage(payload); reveal.classList.add('show'); overlayOpen=true; }, CONFIG.FX_BURST_MS-80);
   },{passive:true});
 })();
+
 (function runSelfTests(){
   const results=[]; const ok=(name,cond)=>results.push({test:name, pass:!!cond});
   const testW=64, testH=96; const r=Math.max(8,0.9*Math.max(testW,testH));
@@ -262,6 +257,12 @@ const LanternField=(function(){
   const rx=(testW*CONFIG.CLICK_HIT_MULT)/2, ry=(testH*CONFIG.CLICK_HIT_MULT)/2;
   const nx=(0)/rx, ny=(0)/ry; ok('hit test center point', nx*nx+ny*ny<=1);
   try{ console.table(results); }catch(_){ console.log(results); }
+})();
+
+(function introAutoHide(){
+  const intro=document.getElementById('intro');
+  if(!intro) return;
+  setTimeout(()=>{ intro.classList.add('hide'); setTimeout(()=>{ intro.remove(); }, 360); }, 5000);
 })();
 </script>
 </body>
